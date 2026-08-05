@@ -1,0 +1,18 @@
+[project]
+name = "rag-pipeline-guide"
+version = "0.1.0"
+description = "A RAG pipeline built from scratch, one step at a time."
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+dependencies = []
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["rag_pipeline*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
