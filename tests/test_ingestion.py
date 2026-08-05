@@ -3,6 +3,7 @@ import os
 import pytest
 
 from rag_pipeline.ingestion import (
+    extract_text_from_html,
     load_text_directory,
     load_text_file,
     make_document,
@@ -99,7 +100,109 @@ def test_load_text_directory_raises_on_missing_directory(tmp_path):
         load_text_directory(os.path.join(str(tmp_path), "nope"))
 
 
-# --- extract_text_from_html  -- not yet implemented ---
+# --- extract_text_from_html ---
+
+# the documented examples
+
+
+def test_extract_strips_tags():
+    assert extract_text_from_html("<p>Hello <b>World</b></p>") == "Hello World"
+
+
+def test_extract_decodes_named_entity():
+    assert extract_text_from_html("<p>a &amp; b</p>") == "a & b"
+
+
+# entity decoding
+
+
+def test_extract_decodes_numeric_charref():
+    assert extract_text_from_html("<p>a &#39; b</p>") == "a ' b"
+
+
+def test_extract_decodes_unicode_charref():
+    assert extract_text_from_html("<p>café &#8212; ok</p>") == "café — ok"
+
+
+# hidden elements
+
+
+def test_extract_skips_script_body():
+    assert extract_text_from_html("<script>var x = 1;</script>hi") == "hi"
+
+
+def test_extract_skips_style_body():
+    assert extract_text_from_html("<style>p{color:red}</style>hi") == "hi"
+
+
+def test_extract_skips_hidden_elements_case_insensitively():
+    assert extract_text_from_html("<SCRIPT>bad</SCRIPT>ok") == "ok"
+
+
+def test_extract_skips_several_hidden_elements():
+    html = "<script>x</script>a<script>y</script>b"
+
+    assert extract_text_from_html(html) == "ab"
+
+
+def test_extract_recovers_from_stray_closing_tag():
+    """The depth counter floors at zero, so this cannot unbalance the parser."""
+    assert extract_text_from_html("</script><p>visible</p>") == "visible"
+
+
+def test_extract_drops_everything_after_an_unclosed_script():
+    """Documented consequence: no closing tag means hidden_depth never drops."""
+    assert extract_text_from_html("<p>unclosed <script>secret") == "unclosed"
+
+
+# things a regex would get wrong
+
+
+def test_extract_handles_attribute_containing_angle_bracket():
+    assert extract_text_from_html('<p title="a > b">text</p>') == "text"
+
+
+def test_extract_drops_comments():
+    assert extract_text_from_html("<!-- comment -->visible") == "visible"
+
+
+def test_extract_drops_doctype():
+    html = "<!DOCTYPE html><html><body>hi</body></html>"
+
+    assert extract_text_from_html(html) == "hi"
+
+
+# whitespace and boundaries
+
+
+def test_extract_returns_empty_for_empty_input():
+    assert extract_text_from_html("") == ""
+
+
+def test_extract_returns_empty_when_only_hidden_content():
+    assert extract_text_from_html("<style>p{color:red}</style>") == ""
+
+
+def test_extract_passes_through_text_with_no_tags():
+    assert extract_text_from_html("no tags at all") == "no tags at all"
+
+
+def test_extract_strips_ends_but_keeps_interior_whitespace():
+    assert extract_text_from_html("<p>  a   b  </p>") == "a   b"
+
+
+def test_extract_glues_adjacent_block_elements():
+    """A real limitation, not an accident -- see the step doc.
+
+    Nothing is inserted between text nodes, so block elements run together and
+    normalize_text cannot recover the lost boundary.
+    """
+    assert extract_text_from_html("<p>one</p><p>two</p>") == "onetwo"
+    assert normalize_text(extract_text_from_html("<p>one</p><p>two</p>")) == "onetwo"
+
+
+def test_extract_keeps_whitespace_that_markup_did_provide():
+    assert extract_text_from_html("<p>one</p>\n<p>two</p>") == "one\ntwo"
 
 
 # --- normalize_text ---

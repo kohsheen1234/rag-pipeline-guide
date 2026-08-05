@@ -5,7 +5,7 @@ document records for the rest of the pipeline:
 
     load_text_file          bytes on disk    -> str
     load_text_directory     a folder         -> list[str], filename order
-    extract_text_from_html  markup           -> str            (not yet written)
+    extract_text_from_html  markup           -> visible text
     normalize_text          messy str        -> tidy single line
     make_document           str + provenance -> document dict
 
@@ -18,13 +18,19 @@ running.
 
 import os
 import unicodedata
+from html.parser import HTMLParser
 
 __all__ = [
     "load_text_file",
     "load_text_directory",
+    "extract_text_from_html",
     "normalize_text",
     "make_document",
 ]
+
+#: Elements whose text content is code, not prose, and must not reach the
+#: extracted text.
+HIDDEN_ELEMENTS = {"script", "style"}
 
 
 def load_text_file(path: str) -> str:
@@ -76,6 +82,63 @@ def load_text_directory(directory_path: str) -> list[str]:
             texts.append(load_text_file(file_path))
 
     return texts
+
+
+class VisibleTextParser(HTMLParser):
+    """Collects the text nodes of an HTML document, skipping hidden elements.
+
+    A depth counter rather than a boolean flag, so that malformed markup
+    cannot leave the parser stuck. The counter never goes below zero, so a
+    stray ``</script>`` with no opening tag is ignored instead of unbalancing
+    everything that follows.
+
+    ``convert_charrefs=True`` makes :meth:`handle_data` receive text with
+    character references already decoded, so ``&amp;`` arrives as ``&``.
+    """
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.text_parts = []
+        self.hidden_depth = 0
+
+    def handle_starttag(self, tag, attrs):
+        if tag.lower() in HIDDEN_ELEMENTS:
+            self.hidden_depth += 1
+
+    def handle_endtag(self, tag):
+        if tag.lower() in HIDDEN_ELEMENTS and self.hidden_depth > 0:
+            self.hidden_depth -= 1
+
+    def handle_data(self, data):
+        if self.hidden_depth == 0:
+            self.text_parts.append(data)
+
+
+def extract_text_from_html(html: str) -> str:
+    """Extract the visible text from an HTML string.
+
+    Tags are removed, character references such as ``&amp;`` are decoded, and
+    the contents of ``<script>`` and ``<style>`` are skipped so that code does
+    not leak into the prose. Comments and doctypes are dropped.
+
+    Text nodes are concatenated with nothing between them, so whatever
+    whitespace the markup contained is what separates the words. Adjacent
+    block elements therefore run together -- ``"<p>one</p><p>two</p>"`` yields
+    ``"onetwo"``. Only leading and trailing whitespace is stripped; interior
+    whitespace is left for :func:`normalize_text`.
+
+    Args:
+        html: An HTML document or fragment. Malformed markup is tolerated;
+            the parser does its best rather than raising.
+
+    Returns:
+        The visible text, stripped at both ends.
+    """
+    parser = VisibleTextParser()
+    parser.feed(html)
+    parser.close()
+
+    return "".join(parser.text_parts).strip()
 
 
 def normalize_text(text: str) -> str:

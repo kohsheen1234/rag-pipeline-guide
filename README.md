@@ -9,7 +9,7 @@ well enough to know what it guarantees, what it deliberately does not, and what
 silently breaks when you get it wrong. Every step has a doc explaining the
 reasoning, not just the code.
 
-**Progress: 4 / 51 steps** (1, 2, 4, 5 — step 3 still outstanding).
+**Progress: 7 / 51 steps.**
 
 ---
 
@@ -18,9 +18,11 @@ reasoning, not just the code.
 ```
 rag_pipeline/
   ingestion.py          load, extract, normalise, wrap into documents
+  chunking.py           split documents into retrievable passages
 
 tests/
   test_ingestion.py
+  test_chunking.py
 
 docs/
   README.md             index of all steps + doc conventions
@@ -28,8 +30,13 @@ docs/
     00-overview.md      design rules for the stage
     step-01-load-text-file.md
     step-02-load-text-directory.md
+    step-03-extract-text-from-html.md
     step-04-normalize-text.md
     step-05-make-document.md
+  chunking/
+    00-overview.md
+    step-06-chunk-fixed-size.md
+    step-07-chunk-by-tokens.md
 ```
 
 **One module per pipeline stage**, named for what it does rather than which

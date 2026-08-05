@@ -10,23 +10,33 @@ steps, so the individual step docs can stay focused on their own function.
 
 ## Part 1 · [Document Ingestion & Preprocessing](ingestion/00-overview.md)
 
-Raw files on disk become a deterministically ordered list of clean strings.
+Raw files and HTML become a deterministically ordered list of document records.
 
 | # | Step | Doc |
 | --- | --- | --- |
 | 1 | `load_text_file` | [step-01-load-text-file.md](ingestion/step-01-load-text-file.md) |
 | 2 | `load_text_directory` | [step-02-load-text-directory.md](ingestion/step-02-load-text-directory.md) |
-| 3 | — | _not yet documented_ |
+| 3 | `extract_text_from_html` | [step-03-extract-text-from-html.md](ingestion/step-03-extract-text-from-html.md) |
 | 4 | `normalize_text` | [step-04-normalize-text.md](ingestion/step-04-normalize-text.md) |
 | 5 | `make_document` | [step-05-make-document.md](ingestion/step-05-make-document.md) |
 
 ---
 
+## Part 2 · [Chunking Strategies](chunking/00-overview.md)
+
+Documents become passages small enough to embed and specific enough to rank.
+
+| # | Step | Doc |
+| --- | --- | --- |
+| 6 | `chunk_fixed_size` | [step-06-chunk-fixed-size.md](chunking/step-06-chunk-fixed-size.md) |
+| 7 | `chunk_by_tokens` | [step-07-chunk-by-tokens.md](chunking/step-07-chunk-by-tokens.md) |
+
+---
+
 ## Progress
 
-**4 / 51 steps documented**, with step 3 outstanding. Later parts get their own
-folder and overview as they are reached — chunking, embedding, indexing,
-retrieval, generation, and evaluation.
+**7 / 51 steps.** Later parts get their own folder and overview as they are
+reached — embedding, indexing, retrieval, generation, and evaluation.
 
 ---
 
