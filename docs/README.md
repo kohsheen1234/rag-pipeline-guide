@@ -30,12 +30,15 @@ Documents become passages small enough to embed and specific enough to rank.
 | --- | --- | --- |
 | 6 | `chunk_fixed_size` | [step-06-chunk-fixed-size.md](chunking/step-06-chunk-fixed-size.md) |
 | 7 | `chunk_by_tokens` | [step-07-chunk-by-tokens.md](chunking/step-07-chunk-by-tokens.md) |
+| 8 | `chunk_by_sentences` | [step-08-chunk-by-sentences.md](chunking/step-08-chunk-by-sentences.md) |
+| 9 | `chunk_with_overlap` | [step-09-chunk-with-overlap.md](chunking/step-09-chunk-with-overlap.md) |
+| 10 | `attach_chunk_metadata` | [step-10-attach-chunk-metadata.md](chunking/step-10-attach-chunk-metadata.md) |
 
 ---
 
 ## Progress
 
-**7 / 51 steps.** Later parts get their own folder and overview as they are
+**10 / 51 steps.** Parts 1 and 2 are complete. Later parts get their own folder and overview as they are
 reached — embedding, indexing, retrieval, generation, and evaluation.
 
 ---

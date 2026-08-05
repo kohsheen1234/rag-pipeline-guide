@@ -39,14 +39,29 @@ Every strategy in this part is a different answer to that tension.
 
 ## Steps
 
-Both live in [`rag_pipeline/chunking.py`](../../rag_pipeline/chunking.py).
+All live in [`rag_pipeline/chunking.py`](../../rag_pipeline/chunking.py).
 
-| # | Function | Bound on | What it does |
-| --- | --- | --- | --- |
-| 6 | [`chunk_fixed_size`](step-06-chunk-fixed-size.md) | characters | Consecutive non-overlapping character windows. |
-| 7 | [`chunk_by_tokens`](step-07-chunk-by-tokens.md) | tokens | The same windowing, over tokenizer ids instead. |
+Four strategies, then one step that gives the output an identity.
+
+| # | Function | Bound on | Limit is | What it does |
+| --- | --- | --- | --- | --- |
+| 6 | [`chunk_fixed_size`](step-06-chunk-fixed-size.md) | characters | hard | Consecutive non-overlapping character windows. |
+| 7 | [`chunk_by_tokens`](step-07-chunk-by-tokens.md) | tokens | hard | The same windowing, over tokenizer ids instead. |
+| 8 | [`chunk_by_sentences`](step-08-chunk-by-sentences.md) | characters | soft | Packs whole sentences; an overlong one exceeds the limit. |
+| 9 | [`chunk_with_overlap`](step-09-chunk-with-overlap.md) | characters | hard | Sliding windows that share `overlap` characters. |
+| 10 | [`attach_chunk_metadata`](step-10-attach-chunk-metadata.md) | — | — | Wraps chunks with source, position, and a stable id. |
 
 _Steps are added to this table as the guide progresses._
+
+Note the "limit is" column. Steps 6, 7, and 9 guarantee their bound because they
+cut wherever the counter runs out. Step 8 refuses to split a sentence, so its
+limit is a target — anything downstream needing a hard bound must enforce it
+itself.
+
+The four strategies answer the size trade-off in different ways, but only step 9
+addresses the *boundary* problem directly: every disjoint chunker destroys any
+fact that straddles a cut, and overlap is the only defence against that — paid
+for in index size.
 
 ## Data flow
 
@@ -56,18 +71,30 @@ _Steps are added to this table as the guide progresses._
           ▼
      document text
           │
-          ├──────────────────────┐
-          ▼                      ▼
-  ┌────────────────────┐  ┌──────────────────┐
-  │  chunk_fixed_size  │  │  chunk_by_tokens │ ◀── tokenizer
-  └─────────┬──────────┘  └────────┬─────────┘
-            │  characters          │  tokens
-            └──────────┬───────────┘
-                       ▼
-                   list[str]   ──▶  Part 3 · Embedding
+          ├──────────────┬──────────────┬──────────────┐
+          ▼              ▼              ▼              ▼
+  ┌───────────────┐ ┌──────────┐ ┌─────────────┐ ┌──────────────┐
+  │chunk_fixed_   │ │chunk_by_ │ │chunk_by_    │ │chunk_with_   │
+  │size           │ │tokens    │ │sentences    │ │overlap       │
+  └───────┬───────┘ └────┬─────┘ └──────┬──────┘ └──────┬───────┘
+          │ characters   │ tokens       │ sentences     │ sliding
+          │ cuts         │ ◀─ tokenizer │ cuts at .!?   │ windows
+          │ anywhere     │              │               │ share text
+          └──────────────┴──────┬───────┴───────────────┘
+                                ▼
+                            list[str]
+                                │
+                 source ──▶ ┌───────────────────────┐
+                            │ attach_chunk_metadata │
+                            └───────────┬───────────┘
+                                        ▼
+              {'text', 'source', 'position', 'chunk_id'}
+                                        │
+                                        ▼
+                              Part 3 · Embedding
 ```
 
-Chunks are currently bare strings, so the `source` and `title` attached by
-[`make_document`](../ingestion/step-05-make-document.md) do not travel with
-them. Until provenance is carried onto each chunk, a retrieved passage cannot
-be cited — expect a later step to close that gap.
+Step 10 closes the provenance gap the chunkers open: they all take a string and
+return strings, so a passage arrives at the index having forgotten which
+document it came from. Note that `title` is still lost — a chunk record carries
+`source` but nothing links it back to the document's human-readable name.

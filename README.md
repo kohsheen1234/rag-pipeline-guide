@@ -9,7 +9,7 @@ well enough to know what it guarantees, what it deliberately does not, and what
 silently breaks when you get it wrong. Every step has a doc explaining the
 reasoning, not just the code.
 
-**Progress: 7 / 51 steps.**
+**Progress: 10 / 51 steps** — ingestion and chunking complete.
 
 ---
 
@@ -37,6 +37,9 @@ docs/
     00-overview.md
     step-06-chunk-fixed-size.md
     step-07-chunk-by-tokens.md
+    step-08-chunk-by-sentences.md
+    step-09-chunk-with-overlap.md
+    step-10-attach-chunk-metadata.md
 ```
 
 **One module per pipeline stage**, named for what it does rather than which
