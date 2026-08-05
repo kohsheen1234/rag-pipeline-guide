@@ -36,25 +36,105 @@ Documents become passages small enough to embed and specific enough to rank.
 
 ---
 
-## Parts 4–8 · implemented, docs pending
+## Part 3 · [Embeddings & Corpus Storage](embeddings/00-overview.md)
 
-All 51 steps are implemented and tested. Step docs so far cover Parts 1–3; the
-remaining parts are listed here with their module so the code is still findable.
+Chunks become a matrix, and the matrix survives a restart.
 
-| Part | Steps | Module |
+| # | Step | Doc |
 | --- | --- | --- |
-| 4 · Dense Retrieval with NumPy and FAISS | 16–23 | [`retrieval.py`](../rag_pipeline/retrieval.py) |
-| 5 · Prompting and Answer Generation | 24–32 | [`generation.py`](../rag_pipeline/generation.py) |
-| 6 · Advanced Retrieval Techniques | 33–40 | [`advanced_retrieval.py`](../rag_pipeline/advanced_retrieval.py) |
-| 7 · Evaluation | 41–46 | [`evaluation.py`](../rag_pipeline/evaluation.py) |
-| 8 · Robustness, Caching, and Chat Memory | 47–51 | [`robustness.py`](../rag_pipeline/robustness.py) |
+| 11 | `load_embedding_model` | [step-11-load-embedding-model.md](embeddings/step-11-load-embedding-model.md) |
+| 12 | `embed_text` | [step-12-embed-text.md](embeddings/step-12-embed-text.md) |
+| 13 | `embed_chunks` | [step-13-embed-chunks.md](embeddings/step-13-embed-chunks.md) |
+| 14 | `l2_normalize` | [step-14-l2-normalize.md](embeddings/step-14-l2-normalize.md) |
+| 15 | `save_corpus` | [step-15-save-corpus.md](embeddings/step-15-save-corpus.md) |
+
+---
+
+## Part 4 · [Dense Retrieval with NumPy and FAISS](retrieval/00-overview.md)
+
+The same search built twice, and checked against itself.
+
+| # | Step | Doc |
+| --- | --- | --- |
+| 16 | `cosine_similarity_search` | [step-16-cosine-similarity-search.md](retrieval/step-16-cosine-similarity-search.md) |
+| 17 | `top_k_indices` | [step-17-top-k-indices.md](retrieval/step-17-top-k-indices.md) |
+| 18 | `top_k_chunks` | [step-18-top-k-chunks.md](retrieval/step-18-top-k-chunks.md) |
+| 19 | `retrieve` | [step-19-retrieve.md](retrieval/step-19-retrieve.md) |
+| 20 | `build_faiss_index` | [step-20-build-faiss-index.md](retrieval/step-20-build-faiss-index.md) |
+| 21 | `faiss_search` | [step-21-faiss-search.md](retrieval/step-21-faiss-search.md) |
+| 22 | `compare_faiss_to_numpy` | [step-22-compare-faiss-to-numpy.md](retrieval/step-22-compare-faiss-to-numpy.md) |
+| 23 | `save_faiss_index` | [step-23-save-faiss-index.md](retrieval/step-23-save-faiss-index.md) |
+
+---
+
+## Part 5 · [Prompting and Answer Generation](generation/00-overview.md)
+
+Passages become a prompt, and the prompt becomes an answer with sources.
+
+| # | Step | Doc |
+| --- | --- | --- |
+| 24 | `build_prompt_template` | [step-24-build-prompt-template.md](generation/step-24-build-prompt-template.md) |
+| 25 | `format_context` | [step-25-format-context.md](generation/step-25-format-context.md) |
+| 26 | `truncate_context` | [step-26-truncate-context.md](generation/step-26-truncate-context.md) |
+| 27 | `add_system_instruction` | [step-27-add-system-instruction.md](generation/step-27-add-system-instruction.md) |
+| 28 | `load_generator` | [step-28-load-generator.md](generation/step-28-load-generator.md) |
+| 29 | `generate_answer` | [step-29-generate-answer.md](generation/step-29-generate-answer.md) |
+| 30 | `rag_answer` | [step-30-rag-answer.md](generation/step-30-rag-answer.md) |
+| 31 | `track_source_chunk_ids` | [step-31-track-source-chunk-ids.md](generation/step-31-track-source-chunk-ids.md) |
+| 32 | `append_source_references` | [step-32-append-source-references.md](generation/step-32-append-source-references.md) |
+
+---
+
+## Part 6 · [Advanced Retrieval Techniques](advanced-retrieval/00-overview.md)
+
+Eight ways plain dense retrieval is not quite good enough.
+
+| # | Step | Doc |
+| --- | --- | --- |
+| 33 | `query_rewrite` | [step-33-query-rewrite.md](advanced-retrieval/step-33-query-rewrite.md) |
+| 34 | `hyde_retrieve` | [step-34-hyde-retrieve.md](advanced-retrieval/step-34-hyde-retrieve.md) |
+| 35 | `reciprocal_rank_fusion` | [step-35-reciprocal-rank-fusion.md](advanced-retrieval/step-35-reciprocal-rank-fusion.md) |
+| 36 | `bm25_search` | [step-36-bm25-search.md](advanced-retrieval/step-36-bm25-search.md) |
+| 37 | `hybrid_search` | [step-37-hybrid-search.md](advanced-retrieval/step-37-hybrid-search.md) |
+| 38 | `rerank_cross_encoder` | [step-38-rerank-cross-encoder.md](advanced-retrieval/step-38-rerank-cross-encoder.md) |
+| 39 | `maximal_marginal_relevance` | [step-39-maximal-marginal-relevance.md](advanced-retrieval/step-39-maximal-marginal-relevance.md) |
+| 40 | `filter_by_metadata` | [step-40-filter-by-metadata.md](advanced-retrieval/step-40-filter-by-metadata.md) |
+
+---
+
+## Part 7 · [Evaluation](evaluation/00-overview.md)
+
+How you find out whether any of the previous choices helped.
+
+| # | Step | Doc |
+| --- | --- | --- |
+| 41 | `build_eval_set` | [step-41-build-eval-set.md](evaluation/step-41-build-eval-set.md) |
+| 42 | `hit_rate_at_k` | [step-42-hit-rate-at-k.md](evaluation/step-42-hit-rate-at-k.md) |
+| 43 | `recall_at_k` | [step-43-recall-at-k.md](evaluation/step-43-recall-at-k.md) |
+| 44 | `mean_reciprocal_rank` | [step-44-mean-reciprocal-rank.md](evaluation/step-44-mean-reciprocal-rank.md) |
+| 45 | `faithfulness_score` | [step-45-faithfulness-score.md](evaluation/step-45-faithfulness-score.md) |
+| 46 | `relevance_score` | [step-46-relevance-score.md](evaluation/step-46-relevance-score.md) |
+
+---
+
+## Part 8 · [Robustness, Caching, and Chat Memory](robustness/00-overview.md)
+
+What the happy path ignores.
+
+| # | Step | Doc |
+| --- | --- | --- |
+| 47 | `handle_no_context` | [step-47-handle-no-context.md](robustness/step-47-handle-no-context.md) |
+| 48 | `deduplicate_chunks` | [step-48-deduplicate-chunks.md](robustness/step-48-deduplicate-chunks.md) |
+| 49 | `cache_query_embedding` | [step-49-cache-query-embedding.md](robustness/step-49-cache-query-embedding.md) |
+| 50 | `update_chat_memory` | [step-50-update-chat-memory.md](robustness/step-50-update-chat-memory.md) |
+| 51 | `rewrite_followup` | [step-51-rewrite-followup.md](robustness/step-51-rewrite-followup.md) |
 
 ---
 
 ## Progress
 
-**51 / 51 steps implemented**, 15 with step docs. Parts 1–3 are fully
-documented; Parts 4–8 have code, docstrings, and tests but no step docs yet. Later parts get their own folder and overview as they are
+**51 / 51 steps documented.** Every public function has a step doc, and every
+part has an overview covering the decisions that span its steps. Later parts get their own folder and overview as they are
 reached — embedding, indexing, retrieval, generation, and evaluation.
 
 ---

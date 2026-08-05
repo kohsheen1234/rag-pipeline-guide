@@ -11,9 +11,8 @@ what breaks when you get it slightly wrong. A lot of RAG bugs don't raise. They
 just return the wrong passage and let the model sound confident about it, and
 most of the notes here are about those.
 
-All 51 steps are implemented, with 555 tests. The step-by-step write-ups in
-`docs/` currently cover the first three parts (steps 1–15); the rest have
-docstrings and tests but no long-form doc yet.
+All 51 steps are implemented, with 555 tests and a write-up for every one of
+them in `docs/`.
 
 ## What's in here
 
@@ -47,8 +46,10 @@ greedily, and
 tells you that this quietly turns `3.5` into `3. 5` and why that matters before
 you embed anything.
 
-Each part also has an `00-overview.md` covering the decisions that span its
-steps. Start at [`docs/README.md`](docs/README.md).
+Each of the eight parts also has an `00-overview.md` covering the decisions that
+span its steps — why chunking is the highest-leverage stage, why the same search
+is built twice in numpy and FAISS, why the answer-quality metrics are weaker
+than the retrieval ones. Start at [`docs/README.md`](docs/README.md).
 
 ## Running it
 
