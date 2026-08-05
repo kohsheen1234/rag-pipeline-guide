@@ -9,20 +9,25 @@ well enough to know what it guarantees, what it deliberately does not, and what
 silently breaks when you get it wrong. Every step has a doc explaining the
 reasoning, not just the code.
 
-**Progress: 10 / 51 steps** — ingestion and chunking complete.
+**Progress: 51 / 51 steps implemented.** Step docs cover Parts 1–3 (steps 1–15);
+Parts 4–8 have code, docstrings, and tests, with their step docs still to write.
 
 ---
 
 ## Layout
 
 ```
-rag_pipeline/
+rag_pipeline/           one module per pipeline stage
   ingestion.py          load, extract, normalise, wrap into documents
   chunking.py           split documents into retrievable passages
+  embeddings.py         encode chunks, normalise, persist the corpus
+  retrieval.py          cosine search, top-k, FAISS
+  generation.py         prompt assembly, local LM, end-to-end answers
+  advanced_retrieval.py rewriting, BM25, hybrid, RRF, reranking, MMR
+  evaluation.py         hit rate, recall, MRR, faithfulness, relevance
+  robustness.py         abstention, dedup, caching, chat memory
 
-tests/
-  test_ingestion.py
-  test_chunking.py
+tests/                  one test module per pipeline module
 
 docs/
   README.md             index of all steps + doc conventions

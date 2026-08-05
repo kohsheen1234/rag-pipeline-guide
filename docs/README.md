@@ -36,9 +36,25 @@ Documents become passages small enough to embed and specific enough to rank.
 
 ---
 
+## Parts 4–8 · implemented, docs pending
+
+All 51 steps are implemented and tested. Step docs so far cover Parts 1–3; the
+remaining parts are listed here with their module so the code is still findable.
+
+| Part | Steps | Module |
+| --- | --- | --- |
+| 4 · Dense Retrieval with NumPy and FAISS | 16–23 | [`retrieval.py`](../rag_pipeline/retrieval.py) |
+| 5 · Prompting and Answer Generation | 24–32 | [`generation.py`](../rag_pipeline/generation.py) |
+| 6 · Advanced Retrieval Techniques | 33–40 | [`advanced_retrieval.py`](../rag_pipeline/advanced_retrieval.py) |
+| 7 · Evaluation | 41–46 | [`evaluation.py`](../rag_pipeline/evaluation.py) |
+| 8 · Robustness, Caching, and Chat Memory | 47–51 | [`robustness.py`](../rag_pipeline/robustness.py) |
+
+---
+
 ## Progress
 
-**10 / 51 steps.** Parts 1 and 2 are complete. Later parts get their own folder and overview as they are
+**51 / 51 steps implemented**, 15 with step docs. Parts 1–3 are fully
+documented; Parts 4–8 have code, docstrings, and tests but no step docs yet. Later parts get their own folder and overview as they are
 reached — embedding, indexing, retrieval, generation, and evaluation.
 
 ---
